@@ -2,21 +2,21 @@ package UI;
 
 import java.util.Random;
 
-public class Shape {
+public class Mino {
 	enum Tetrominoes {
 		NoShape, ZShape, SShape, LineShape, TShape, SquareShape, LShape, MirroredLShape, Wall
 	};
 
-	private Tetrominoes shape;
+	private Tetrominoes Mino;
 	private int coords[][];
 	private int[][][] coordsTable;
 
-	public Shape() {
+	public Mino() {
 		coords = new int[4][2];
-		setShape(Tetrominoes.NoShape);
+		setMino(Tetrominoes.NoShape);
 	}
 
-	public void setShape(Tetrominoes s) {
+	public void setMino(Tetrominoes s) {
 		//Defines the Pixal of 7 shape of pieces + 1 NoShape + 1 Wall.
 		coordsTable = new int[][][] {
 				{ { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } },
@@ -35,11 +35,11 @@ public class Shape {
 				coords[i][j] = coordsTable[s.ordinal()][i][j];
 			}
 		}
-		shape = s;
+		Mino = s;
 	}
 
 	public Tetrominoes getShape() {
-		return shape;
+		return Mino;
 	}
 
 	private void setX(int index, int x) {
@@ -58,11 +58,12 @@ public class Shape {
 		return coords[index][1];
 	}
 
+	//ミノの形をランダムに生成
 	public void setRandomShape() {
 		Random r = new Random();
 		int x = Math.abs(r.nextInt()) % 7 + 1;
 		Tetrominoes[] values = Tetrominoes.values();
-		setShape(values[x]);
+		setMino(values[x]);
 	}
 
 	public int minX() {
@@ -81,12 +82,13 @@ public class Shape {
 		return m;
 	}
 
-	public Shape rotate() {
-		if (shape == Tetrominoes.SquareShape)
+	//ミノ回転メソッド
+	public Mino rotate() {
+		if (Mino == Tetrominoes.SquareShape)
 			return this;
 
-		Shape result = new Shape();
-		result.shape = shape;
+		Mino result = new Mino();
+		result.Mino = Mino;
 
 		for (int i = 0; i < 4; ++i) {
 			result.setX(i, -getY(i));

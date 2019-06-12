@@ -9,11 +9,10 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import UI.Shape.Tetrominoes;
+import UI.Mino.Tetrominoes;
 
 public class Panel extends JPanel implements ActionListener {
 
@@ -26,34 +25,20 @@ public class Panel extends JPanel implements ActionListener {
 	boolean isFallingFinished = false;
 	boolean isStarted = false;
 	boolean isPaused = false;
-	int score = 0;
-	int level = 0;
 	int curX = 0;
 	int curY = 0;
-	Shape curPiece;
-	Shape nextPiece;
+	Mino curPiece;
+	Mino nextPiece;
 	Tetrominoes[] panel;
-	JLabel statusbar;
 	JButton retry;
 
+	//Panelのコンストラクター
 	public Panel(TFrame p) {
 		setFocusable(true);
-		curPiece = new Shape();
-		nextPiece = new Shape();
+		nextPiece = new Mino();
 		nextPiece.setRandomShape();
 		timer = new Timer(400, this);
 		timer.start();
-		statusbar = p.getStatusBar();
-		retry = p.getRetryButton();
-		/*
-		retry.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent ae) {
-				SetEmptyBoard();
-				newPiece();
-				statusbar.setText("Score: " + String.valueOf(score));
-		    }
-		});
-		*/
 		panel = new Tetrominoes[BoardWidth * BoardHeight];
 		this.addKeyListener(new myAdapter());
 		SetEmptyBoard();
@@ -67,25 +52,9 @@ public class Panel extends JPanel implements ActionListener {
 		isStarted = true;
 		//落下しなくなったとき
 		isFallingFinished = false;
-		score = 0;
 		SetEmptyBoard();
 		newPiece();
 		timer.start();
-	}
-
-	// Pause Button.
-	private void pause() {
-		if (!isStarted)
-			return;
-		isPaused = !isPaused;
-		if (isPaused) {
-			timer.stop();
-			statusbar.setText("paused");
-		} else {
-			timer.start();
-			statusbar.setText("Score: " + String.valueOf(score));
-		}
-		repaint();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -101,20 +70,19 @@ public class Panel extends JPanel implements ActionListener {
 	// creating a new piece in the middle.
 	private void newPiece() {
 		curPiece = nextPiece;
-		Shape temp = new Shape();
+		Mino temp = new Mino();
 		temp.setRandomShape();
 		nextPiece = temp;
 		curX = (BoardWidth - 4) / 2;
 		curY = BoardHeight - 1 + curPiece.minY();
 		if (!tryMove(curPiece, curX, curY)) {
-			curPiece.setShape(Tetrominoes.NoShape);
+			curPiece.setMino(Tetrominoes.NoShape);
 			timer.stop();
 			isStarted = false;
-			statusbar.setText("Oooops, game over.");
 		}
 	}
 
-	// Calculating the Square Size.
+	//スクエアサイズを計算する
 	int squareWidth() {
 		return (int) getSize().getWidth() / BoardWidth;
 	}
@@ -123,19 +91,19 @@ public class Panel extends JPanel implements ActionListener {
 		return (int) getSize().getHeight() / BoardHeight;
 	}
 
-	// Return the Shape at Position(x,y) int the panel.
+	// パネル内の位置（x、y）のShapeを返します。
 	Tetrominoes shapeAt(int x, int y) {
 		return panel[(y * BoardWidth) + x];
 	}
 
-	// Initialize the Panel to NoShape.
+	// //パネルをNoShapeに初期化します。
 	private void SetEmptyBoard() {
 		for (int i = 0; i < BoardHeight * BoardWidth; ++i)
 			panel[i] = Tetrominoes.NoShape;
 	}
 
-	// Check if there is enough space to move.
-	private boolean tryMove(Shape newPiece, int newX, int newY) {
+	// 移動するのに十分なスペースがあるかどうかを確認してください。
+	private boolean tryMove(Mino newPiece, int newX, int newY) {
 		for (int i = 0; i < 4; ++i) {
 			int x = newX + newPiece.getX(i);
 			int y = newY - newPiece.getY(i);
@@ -153,6 +121,7 @@ public class Panel extends JPanel implements ActionListener {
 	}
 
 	private void removeFullLines() {
+		@SuppressWarnings("unused")
 		int numFullLines = 0;
 
 		for (int i = BoardHeight - 2; i >= 0; i--) {
@@ -173,30 +142,10 @@ public class Panel extends JPanel implements ActionListener {
 				}
 			}
 		}
+		isFallingFinished = true;
+		curPiece.setMino(Tetrominoes.NoShape);
+		repaint();
 
-		if (numFullLines > 0) {
-			int temps = 0;
-			if (numFullLines == 1)
-				temps = 1;
-			else if (numFullLines == 2)
-				temps = 3;
-			else if (numFullLines == 3)
-				temps = 5;
-			else if (numFullLines == 4)
-				temps = 10;
-			score += temps;
-			//Now we have current Score, try to set the level.
-			level = score / 50;
-			if (level > 7)
-				level = 7;
-			timer.setDelay(timeset[level]);
-			timer.start();
-
-			statusbar.setText("Score: " + String.valueOf(score));
-			isFallingFinished = true;
-			curPiece.setShape(Tetrominoes.NoShape);
-			repaint();
-		}
 	}
 
 	private void pieceDropped() {
@@ -232,7 +181,7 @@ public class Panel extends JPanel implements ActionListener {
 
 		Dimension size = getSize();
 		int boardTop = (int) size.getHeight() - BoardHeight * squareHeight();
-
+		//壁と床を作っているっぽい？
 		for (int i = 0; i < BoardHeight; ++i) {
 			for (int j = 0; j < BoardWidth; ++j) {
 				Tetrominoes shape = shapeAt(j, BoardHeight - i - 1);
@@ -242,7 +191,7 @@ public class Panel extends JPanel implements ActionListener {
 					drawSquare(g, 0 + j * squareWidth(), boardTop + i * squareHeight(), shape);
 			}
 		}
-
+		//次に落ちてくるミノの情報が出る
 		if (nextPiece.getShape() != Tetrominoes.NoShape) {
 			int nextX = BoardWidth - 2;
 			int nextY = BoardHeight - 5 + nextPiece.minY();
@@ -257,7 +206,7 @@ public class Panel extends JPanel implements ActionListener {
 			}
 
 		}
-
+		//落ちてくるミノの描写
 		if (curPiece.getShape() != Tetrominoes.NoShape) {
 			for (int i = 0; i < 4; i++) {
 				int x = curX + curPiece.getX(i);
@@ -268,6 +217,7 @@ public class Panel extends JPanel implements ActionListener {
 		}
 	}
 
+	//ミノの色付けのメソッド
 	private void drawSquare(Graphics g, int x, int y, Tetrominoes shape) {
 		Color colors[] = { //Color(引数)はint型の値で、R,G,Bの三原色を0～255の値で指定する。
 				new Color(0, 0, 0),
@@ -295,7 +245,7 @@ public class Panel extends JPanel implements ActionListener {
 		g.drawLine(x + squareWidth() - 1, y + squareHeight() - 1, x + squareWidth() - 1, y + 1);
 	}
 
-	//キーの入力設定
+	//キーの登録
 	class myAdapter extends KeyAdapter {
 		public void keyPressed(KeyEvent e) {
 
@@ -305,15 +255,10 @@ public class Panel extends JPanel implements ActionListener {
 
 			int keycode = e.getKeyCode();
 
-			if (keycode == 'p' || keycode == 'P') {
-				pause();
-				return;
-			}
-
 			if (isPaused)
 				return;
 
-			switch (keycode) {
+			switch (keycode) {//キー登録をする処理
 			case KeyEvent.VK_LEFT:
 				tryMove(curPiece, curX - 1, curY);
 				break;
@@ -333,8 +278,6 @@ public class Panel extends JPanel implements ActionListener {
 				oneLineDown();
 				break;
 			}
-
 		}
 	}
-
 }
