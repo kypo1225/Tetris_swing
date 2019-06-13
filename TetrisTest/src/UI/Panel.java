@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -21,7 +20,8 @@ public class Panel extends JPanel implements ActionListener {
 	static final int BoardHeight = 21;
 
 	Timer timer;
-	int[] timeset = { 400, 350, 300, 200, 100, 50, 30, 20 };
+	//なんの為の配列なのかわからない
+	//int[] timeset = { 430, 350, 300, 200, 100, 50, 30, 20 };
 	boolean isFallingFinished = false;
 	boolean isStarted = false;
 	boolean isPaused = false;
@@ -30,13 +30,13 @@ public class Panel extends JPanel implements ActionListener {
 	Mino curPiece;
 	Mino nextPiece;
 	Tetrominoes[] panel;
-	JButton retry;
 
 	//Panelのコンストラクター
 	public Panel(TFrame p) {
 		setFocusable(true);
 		nextPiece = new Mino();
 		nextPiece.setRandomShape();
+		//ミノの落ちる速度を設定
 		timer = new Timer(400, this);
 		timer.start();
 		panel = new Tetrominoes[BoardWidth * BoardHeight];
