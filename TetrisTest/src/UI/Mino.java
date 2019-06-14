@@ -11,11 +11,13 @@ public class Mino {
 	private int coords[][];// coordsは座標
 	private int[][][] coordsTable;
 
+	//ミノ形のコンストラクター
 	public Mino() {
 		coords = new int[4][2];
 		setMino(Tetrominoes.NoShape);
 	}
 
+	//ミノの形のセッター
 	public void setMino(Tetrominoes s) {
 		//Defines the Pixal of 7 shape of pieces + 1 NoShape + 1 Wall.
 		coordsTable = new int[][][] {
@@ -38,22 +40,27 @@ public class Mino {
 		Mino = s;
 	}
 
+	//ミノ形のゲッター
 	public Tetrominoes getShape() {
 		return Mino;
 	}
 
+	//X座標のセッター
 	private void setX(int index, int x) {
 		coords[index][0] = x;
 	}
 
+	//Y座標のセッター
 	private void setY(int index, int y) {
 		coords[index][1] = y;
 	}
 
+	//X座標のゲッター
 	public int getX(int index) {
 		return coords[index][0];
 	}
 
+	//Y座標のゲッター
 	public int getY(int index) {
 		return coords[index][1];
 	}
@@ -66,6 +73,7 @@ public class Mino {
 		setMino(values[x]);
 	}
 
+	//Y座標のメソッド
 	public int minX() {
 		int m = coords[0][0];
 		for (int i = 0; i < 4; i++) {
@@ -74,6 +82,7 @@ public class Mino {
 		return m;
 	}
 
+	//Y座標のメソッド
 	public int minY() {
 		int m = coords[0][1];
 		for (int i = 0; i < 4; i++) {

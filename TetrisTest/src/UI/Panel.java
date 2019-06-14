@@ -34,6 +34,7 @@ public class Panel extends JPanel implements ActionListener {
 		// パネルがキーボードを受け付けるようにする（必須）JFrameにはデフォルトで備わっている
 		setFocusable(true);
 		nextPiece = new Mino();
+		//ランダム生成したミノを取得
 		nextPiece.setRandomShape();
 		//ミノの落ちる速度をtimerクラスのインスタンス引数で設定(this)
 		timer = new Timer(400, this);
@@ -49,9 +50,9 @@ public class Panel extends JPanel implements ActionListener {
 	public void start() {
 		if (isPaused)
 			return;
-		// 始めたとき
+		// スタートしているか
 		isStarted = true;
-		// 落下しなくなったとき
+		// 落下しているか
 		isFallingFinished = false;
 		SetEmptyBoard();
 		newPiece();
