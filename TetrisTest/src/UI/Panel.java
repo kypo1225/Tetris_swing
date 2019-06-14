@@ -20,26 +20,27 @@ public class Panel extends JPanel implements ActionListener {
 	static final int BoardHeight = 21;
 
 	Timer timer;
-	//なんの為の配列なのかわからない
-	//int[] timeset = { 430, 350, 300, 200, 100, 50, 30, 20 };
 	boolean isFallingFinished = false;
 	boolean isStarted = false;
 	boolean isPaused = false;
-	int curX = 0;
-	int curY = 0;
+	int curX = 0;// 横マスの座標
+	int curY = 0;// 縦マスの座標
 	Mino curPiece;
 	Mino nextPiece;
 	Tetrominoes[] panel;
 
 	//Panelのコンストラクター
 	public Panel(TFrame p) {
+		// パネルがキーボードを受け付けるようにする（必須）JFrameにはデフォルトで備わっている
 		setFocusable(true);
 		nextPiece = new Mino();
 		nextPiece.setRandomShape();
-		//ミノの落ちる速度を設定
+		//ミノの落ちる速度をtimerクラスのインスタンス引数で設定(this)
 		timer = new Timer(400, this);
+		//タイマーをスタートする
 		timer.start();
 		panel = new Tetrominoes[BoardWidth * BoardHeight];
+		// キーリスナーを登録（忘れやすい）
 		this.addKeyListener(new myAdapter());
 		SetEmptyBoard();
 	}
@@ -48,9 +49,9 @@ public class Panel extends JPanel implements ActionListener {
 	public void start() {
 		if (isPaused)
 			return;
-		//始めたとき
+		// 始めたとき
 		isStarted = true;
-		//落下しなくなったとき
+		// 落下しなくなったとき
 		isFallingFinished = false;
 		SetEmptyBoard();
 		newPiece();
@@ -67,7 +68,6 @@ public class Panel extends JPanel implements ActionListener {
 		}
 	}
 
-	// creating a new piece in the middle.
 	private void newPiece() {
 		curPiece = nextPiece;
 		Mino temp = new Mino();
@@ -82,7 +82,7 @@ public class Panel extends JPanel implements ActionListener {
 		}
 	}
 
-	//スクエアサイズを計算する
+	// スクエアサイズを計算する
 	int squareWidth() {
 		return (int) getSize().getWidth() / BoardWidth;
 	}
@@ -91,18 +91,18 @@ public class Panel extends JPanel implements ActionListener {
 		return (int) getSize().getHeight() / BoardHeight;
 	}
 
-	// パネル内の位置（x、y）のShapeを返します。
+	// パネル内の位置（x、y）のミノを返します。
 	Tetrominoes shapeAt(int x, int y) {
 		return panel[(y * BoardWidth) + x];
 	}
 
-	// //パネルをNoShapeに初期化します。
+	// パネルをNoShapeに初期化します
 	private void SetEmptyBoard() {
 		for (int i = 0; i < BoardHeight * BoardWidth; ++i)
 			panel[i] = Tetrominoes.NoShape;
 	}
 
-	// 移動するのに十分なスペースがあるかどうかを確認してください。
+	// 移動するのに十分なスペースがあるかどうかを確認
 	private boolean tryMove(Mino newPiece, int newX, int newY) {
 		for (int i = 0; i < 4; ++i) {
 			int x = newX + newPiece.getX(i);
@@ -176,12 +176,12 @@ public class Panel extends JPanel implements ActionListener {
 		pieceDropped();
 	}
 
-	public void paint(Graphics g) {
+	public void paint(Graphics g) {//Graphicsは描画するクラス。色や形や線を作るクラス
 		super.paint(g);
-
+		// Dimensionクラスにsizeメソッドが存在している
 		Dimension size = getSize();
 		int boardTop = (int) size.getHeight() - BoardHeight * squareHeight();
-		//壁と床を作っているっぽい？
+		// 壁と床を作っているっぽい
 		for (int i = 0; i < BoardHeight; ++i) {
 			for (int j = 0; j < BoardWidth; ++j) {
 				Tetrominoes shape = shapeAt(j, BoardHeight - i - 1);
@@ -191,7 +191,7 @@ public class Panel extends JPanel implements ActionListener {
 					drawSquare(g, 0 + j * squareWidth(), boardTop + i * squareHeight(), shape);
 			}
 		}
-		//次に落ちてくるミノの情報が出る
+		// 次に落ちてくるミノの情報が出る
 		if (nextPiece.getShape() != Tetrominoes.NoShape) {
 			int nextX = BoardWidth - 2;
 			int nextY = BoardHeight - 5 + nextPiece.minY();
@@ -206,7 +206,7 @@ public class Panel extends JPanel implements ActionListener {
 			}
 
 		}
-		//落ちてくるミノの描写
+		// 落ちてくるミノの描写
 		if (curPiece.getShape() != Tetrominoes.NoShape) {
 			for (int i = 0; i < 4; i++) {
 				int x = curX + curPiece.getX(i);
@@ -217,7 +217,7 @@ public class Panel extends JPanel implements ActionListener {
 		}
 	}
 
-	//ミノの色付けのメソッド
+	// ミノの色付けのメソッド
 	private void drawSquare(Graphics g, int x, int y, Tetrominoes shape) {
 		Color colors[] = { //Color(引数)はint型の値で、R,G,Bの三原色を0～255の値で指定する。
 				new Color(0, 0, 0),
@@ -245,7 +245,7 @@ public class Panel extends JPanel implements ActionListener {
 		g.drawLine(x + squareWidth() - 1, y + squareHeight() - 1, x + squareWidth() - 1, y + 1);
 	}
 
-	//キーの登録
+	// キーの登録 KeyAdapter抽象クラスを継承
 	class myAdapter extends KeyAdapter {
 		public void keyPressed(KeyEvent e) {
 
@@ -258,7 +258,7 @@ public class Panel extends JPanel implements ActionListener {
 			if (isPaused)
 				return;
 
-			switch (keycode) {//キー登録をする処理
+			switch (keycode) {// キー登録をする処理
 			case KeyEvent.VK_LEFT:
 				tryMove(curPiece, curX - 1, curY);
 				break;
@@ -268,10 +268,10 @@ public class Panel extends JPanel implements ActionListener {
 			case KeyEvent.VK_UP:
 				tryMove(curPiece.rotate(), curX, curY);
 				break;
-			case KeyEvent.VK_DOWN:
+			case KeyEvent.VK_SPACE:
 				dropDown();
 				break;
-			case 'd':
+			case KeyEvent.VK_DOWN:
 				oneLineDown();
 				break;
 			case 'D':

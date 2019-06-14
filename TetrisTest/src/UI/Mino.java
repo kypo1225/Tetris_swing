@@ -3,12 +3,12 @@ package UI;
 import java.util.Random;
 
 public class Mino {
-	enum Tetrominoes {
+	enum Tetrominoes {// ミノの形と壁
 		NoShape, ZShape, SShape, LineShape, TShape, SquareShape, LShape, MirroredLShape, Wall
 	};
 
 	private Tetrominoes Mino;
-	private int coords[][];
+	private int coords[][];// coordsは座標
 	private int[][][] coordsTable;
 
 	public Mino() {
@@ -82,7 +82,7 @@ public class Mino {
 		return m;
 	}
 
-	//ミノ回転メソッド
+	// ミノ回転メソッド
 	public Mino rotate() {
 		if (Mino == Tetrominoes.SquareShape)
 			return this;
